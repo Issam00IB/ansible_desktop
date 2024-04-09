@@ -1,4 +1,21 @@
-[myhosts]
-10.0.2.21
-10.0.2.80
-10.0.2.110
+# docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html
+# cyberciti.biz/faq/define-ssh-key-per-host-using-ansible_ssh_private_key_file/
+
+#All hosts will be part of group leerlingen.
+
+#Problem here is that IPs are volatile, they will change. Few solutions are:
+#   -1. Put all IPs that DHCP can give below (hahaha)
+#   -2. Give FIXED IP to my PCs with DHCP and MAC address (like teacher showed us)
+#   -3. Use hostnames (how it works? not enough info YET)
+
+[leerlingen]
+PC1 ansible_host=10.0.2.21
+PC2 ansible_host=10.0.2.80
+PC3 ansible_host=10.0.2.110
+
+
+#Create variable for 'leerlingen' like the private keys I will use to make connection
+	#Instead of letting it in 'defaults' in ansible.cfg (because otherwise it is used by default, maybe the teacher will do improvement in the future)
+[leerlingen:vars]
+ansible_ssh_private_key_file=~/.ssh/test
+ansible_user=root
