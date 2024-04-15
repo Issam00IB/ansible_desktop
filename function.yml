@@ -1,0 +1,65 @@
+---
+
+#EXPLANATION ON HOW TO PLAY THIS PLAYBOOK.
+# 1. My objectif was to put everything in one playbook. And so to be able to only execute _certain_ tasks of the playbook but not everything, I used tags
+# 2. As you can see below, some individual tasks have tags. You can add them, alter them easily. See the playbook, the tags are under 'name'.
+
+#Execute a task:
+#If you want to only execute the task for installing webserver then you use this command:
+#COMMAND:  ansible-playbook --tags web function.yml
+#Why ? Well, because there is the tag web to 'install webserver' task. There is also apache2 tag. Choose which tag you want to use, it doesn't matter
+
+#To see lists of tags: 
+#COMMAND: --ansible-playbook --list-tags function.yml
+
+#I hope it helped ! PS: Issam :))
+
+#basic tag: nmap, vim.
+
+- hosts: leerlingen
+  tasks:
+   
+  - name: install updates (Debian)
+   #tags here under. Will always be executed
+    tags: always
+    apt:
+      upgrade: yes
+      update_cache: yes
+    when: ansible_distribution == "Debian" 
+    #when ansible is Debian -> 
+    # not necessary. But I added it for security measures. If one day a non debian device makes a connection (will not happen normally because inventory is manually config)
+
+  - name: install webserver (Debian) 
+    #You can choose to write web or apache2 in tags, it doesn't matter. If you choose 1 of the 2 it will execute that here.
+    tags: web,apache2
+    apt:
+      name:
+        - apache2
+    when: ansible_distribution == "Debian"
+
+  - name: remove webserver (Debian)
+    tags: delweb,delapache2
+    apt:
+      name: apache2
+      state: absent
+    when: ansible_distribution == "Debian"
+
+  - name: install basic (nmap - vim - wireshark)
+    tags: basic
+    apt:
+      name:
+        - nmap
+        - vim
+        - wireshark
+      state: latest
+    when: ansible_distribution == "Debian"
+
+  - name: Copy Packet Tracer Installer from software directory
+    tags: basic,ptracer
+    copy:
+      src: ./software/PacketTracer8.21_Ubuntu-64bit.dep
+      dest: /tmp/packettracer_821_installer.deb
+
+  - name: Install Packet-Tracer
+    tags: basic,ptracer
+    shell: dpkg -i /tmp/packettracer_821_installer.deb

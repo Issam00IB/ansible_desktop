@@ -1,0 +1,18 @@
+---
+
+
+- name: install apache
+  hosts: leerlingen
+  tasks:
+
+#I only put apache and vim to test my variables. If the teacher wants to add a web server on each device for educational purpose
+# Then he can play that playbook
+# - Issam ;)
+  - name: update of repository index
+    package:
+      name:
+        - "{{ apache_package }}"
+        - "{{ vim_package }}"
+      state: latest 
+      update_cache: yes
+    when: ansible_distribution == "Debian"
