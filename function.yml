@@ -54,10 +54,10 @@
       state: latest
     when: ansible_distribution == "Debian"
 
-  - name: Copy Packet Tracer Installer from software directory
+  - name: Download Packet Tracer installer
     tags: basic,ptracer
-    copy:
-      src: ./software/PacketTracer8.21_Ubuntu-64bit.dep
+    get_url:
+      url: "https://archive.org/download/cisco-packet-tracer-821-ubuntu-64bit/CiscoPacketTracer_821_Ubuntu_64bit.deb"
       dest: /tmp/packettracer_821_installer.deb
 
   - name: Install Packet-Tracer
