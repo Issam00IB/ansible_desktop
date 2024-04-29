@@ -16,11 +16,17 @@
 
 #basic tag: nmap, vim.
 
+
+
+
+
+########### Only leerlingen devices
 - hosts: leerlingen
   tasks:
    
+#1. Update
   - name: install updates (Debian)
-   #tags here under. Will always be executed
+   #tags 'always' here under. Will always be executed
     tags: always
     apt:
       upgrade: yes
@@ -29,6 +35,19 @@
     #when ansible is Debian -> 
     # not necessary. But I added it for security measures. If one day a non debian device makes a connection (will not happen normally because inventory is manually config)
 
+#2. Broken packages
+  - name: install broken packages (necessary for packet tracer)
+    tags: always
+    command: apt --fix-broken install
+
+#3. Dialog ( for packet tracer)
+  - name: install dialog
+    tags: always
+    apt:
+      name: dialog
+      state: present
+
+#4. Install Apache
   - name: install webserver (Debian) 
     #You can choose to write web or apache2 in tags, it doesn't matter. If you choose 1 of the 2 it will execute that here.
     tags: web,apache2
@@ -37,6 +56,8 @@
         - apache2
     when: ansible_distribution == "Debian"
 
+
+#5. Remove Apache
   - name: remove webserver (Debian)
     tags: delweb,delapache2
     apt:
@@ -44,8 +65,9 @@
       state: absent
     when: ansible_distribution == "Debian"
 
+#6. Download a few basics packages
   - name: install basic (nmap - vim - wireshark)
-    tags: basic
+    tags: basics
     apt:
       name:
         - nmap
@@ -54,12 +76,33 @@
       state: latest
     when: ansible_distribution == "Debian"
 
+
+#7. Download Packet Tracer on all hosts
   - name: Download Packet Tracer installer
-    tags: basic,ptracer
+    tags: ptracer
     get_url:
       url: "https://archive.org/download/cisco-packet-tracer-821-ubuntu-64bit/CiscoPacketTracer_821_Ubuntu_64bit.deb"
       dest: /tmp/packettracer_821_installer.deb
 
-  - name: Install Packet-Tracer
-    tags: basic,ptracer
-    shell: dpkg -i /tmp/packettracer_821_installer.deb
+#8. Debconf - Non interactive mode
+  - name: Non Interactive, No more asking to accept EULA terms
+    tags: ptracer
+    command: echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+
+#9. Accept ELUA
+  - name: Accept EULA
+    tags: ptracer
+    command: dpkg -i /tmp/packettracer_821_installer.deb
+    
+
+#  - name: Debug install result
+#    debug:
+#      var: install_result
+
+  - name: Clean up files
+    tags: ptracer
+    file:
+     path: /tmp/packettracer_821_installer.deb
+     state: absent
+
+
