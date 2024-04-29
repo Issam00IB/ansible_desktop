@@ -15,7 +15,7 @@ PC1 ansible_host=10.0.2.21
 PC2 ansible_host=10.0.2.80
 PC3 ansible_host=10.0.2.110
 PC4 ansible_host=10.0.2.26
-
+PC5 ansible_host=10.0.2.106
 #Create variable for 'leerlingen' like the private keys I will use to make connection
 	#Instead of letting it in 'defaults' in ansible.cfg (because otherwise it is used by default, maybe the teacher will do improvement in the future)
 [leerlingen:vars]
