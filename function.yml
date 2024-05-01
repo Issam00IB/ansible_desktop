@@ -108,7 +108,7 @@
     tags: ptracer, install
     when: packettracer_installed.stat.exists == false
     copy: 
-      src: /home/issam/ansible_desktop/software/packettracer_821_installer.deb
+      src: ~/ansible_desktop/software/packettracer_821_installer.deb
       dest: /tmp/packettracer_821_installer.deb
 
 
